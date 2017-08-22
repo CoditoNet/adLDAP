@@ -97,12 +97,18 @@ class adLDAPUtils {
     *
     * @param string $str The string the parse
     * @author Port by Andreas Gohr <andi@splitbrain.org>
+    * @author PHP7 version by Grzegorz Korba <wirone@gmail.com>
     * @return string
     */
-    public function ldapSlashes($str){
-        return preg_replace('/([\x00-\x1F\*\(\)\\\\])/e',
-                            '"\\\\\".join("",unpack("H2","$1"))',
-                            $str);
+    public function ldapSlashes($str)
+    {
+        return preg_replace_callback(
+            '/([\x00-\x1F\*\(\)\\\\])/',
+            function ($matches) {
+                return '\\' . implode('', unpack('H2', $matches[0]));
+            },
+            $str
+        );
     }
     
     /**
